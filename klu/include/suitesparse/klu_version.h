@@ -1,14 +1,24 @@
+//------------------------------------------------------------------------------
+// KLU/Include/klu_version.h: internal include file for KLU
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
+
 #ifndef _KLU_VERSION_H
 #define _KLU_VERSION_H
 
 #ifdef DLONG
-#define Int SuiteSparse_long
-#define Int_id SuiteSparse_long_id
-#define Int_MAX SuiteSparse_long_max
+#define Int int64_t
+#define Int_id "%" PRId64
+#define Int_MAX INT64_MAX
 #else
-#define Int int
+#define Int int32_t
 #define Int_id "%d"
-#define Int_MAX INT_MAX
+#define Int_MAX INT32_MAX
 #endif
 
 #define NPRINT  
@@ -41,6 +51,7 @@
 
 #ifdef DLONG
 
+// zl: complex int64_t
 #define KLU_scale klu_zl_scale
 #define KLU_solve klu_zl_solve
 #define KLU_tsolve klu_zl_tsolve
@@ -64,6 +75,7 @@
 
 #else
 
+// z: complex int32_t
 #define KLU_scale klu_z_scale
 #define KLU_solve klu_z_solve
 #define KLU_tsolve klu_z_tsolve
@@ -91,6 +103,7 @@
 
 #ifdef DLONG
 
+// l: int64_t
 #define KLU_scale klu_l_scale
 #define KLU_solve klu_l_solve
 #define KLU_tsolve klu_l_tsolve
@@ -114,6 +127,7 @@
 
 #else
 
+// no prefix: int32_t
 #define KLU_scale klu_scale
 #define KLU_solve klu_solve
 #define KLU_tsolve klu_tsolve
@@ -142,6 +156,7 @@
 
 #ifdef DLONG
 
+// l: int64_t
 #define KLU_analyze klu_l_analyze
 #define KLU_analyze_given klu_l_analyze_given
 #define KLU_alloc_symbolic klu_l_alloc_symbolic
@@ -166,6 +181,7 @@
 
 #else
 
+// no prefiex: int64_t
 #define KLU_analyze klu_analyze
 #define KLU_analyze_given klu_analyze_given
 #define KLU_alloc_symbolic klu_alloc_symbolic
@@ -197,23 +213,23 @@
 
 /*
 SCALAR_IS_NAN(x):
-	True if x is NaN.  False otherwise.  The commonly-existing isnan(x)
-	function could be used, but it's not in Kernighan & Ritchie 2nd edition
-	(ANSI C).  It may appear in <math.h>, but I'm not certain about
-	portability.  The expression x != x is true if and only if x is NaN,
-	according to the IEEE 754 floating-point standard.
+    True if x is NaN.  False otherwise.  The commonly-existing isnan(x)
+    function could be used, but it's not in Kernighan & Ritchie 2nd edition
+    (ANSI C).  It may appear in <math.h>, but I'm not certain about
+    portability.  The expression x != x is true if and only if x is NaN,
+    according to the IEEE 754 floating-point standard.
 
 SCALAR_IS_ZERO(x):
-	True if x is zero.  False if x is nonzero, NaN, or +/- Inf.
-	This is (x == 0) if the compiler is IEEE 754 compliant.
+    True if x is zero.  False if x is nonzero, NaN, or +/- Inf.
+    This is (x == 0) if the compiler is IEEE 754 compliant.
 
 SCALAR_IS_NONZERO(x):
-	True if x is nonzero, NaN, or +/- Inf.  False if x zero.
-	This is (x != 0) if the compiler is IEEE 754 compliant.
+    True if x is nonzero, NaN, or +/- Inf.  False if x zero.
+    This is (x != 0) if the compiler is IEEE 754 compliant.
 
 SCALAR_IS_LTZERO(x):
-	True if x is < zero or -Inf.  False if x is >= 0, NaN, or +Inf.
-	This is (x < 0) if the compiler is IEEE 754 compliant.
+    True if x is < zero or -Inf.  False if x is >= 0, NaN, or +Inf.
+    This is (x < 0) if the compiler is IEEE 754 compliant.
 */
 
 /* These all work properly, according to the IEEE 754 standard ... except on */
@@ -250,7 +266,7 @@ SCALAR_IS_LTZERO(x):
 
 #ifndef COMPLEX
 
-typedef double Unit;
+typedef double Unit ;
 #define Entry double
 
 #define SPLIT(s)                    (1)
@@ -296,36 +312,36 @@ typedef double Unit;
 /* -------------------------------------------------------------------------- */
 
 /*
-	Note:  An alternative to this Double_Complex type would be to use a
-	struct { double r ; double i ; }.  The problem with that method
-	(used by the Sun Performance Library, for example) is that ANSI C provides
-	no guarantee about the layout of a struct.  It is possible that the sizeof
-	the struct above would be greater than 2 * sizeof (double).  This would
-	mean that the complex BLAS could not be used.  The method used here avoids
-	that possibility.  ANSI C *does* guarantee that an array of structs has
-	the same size as n times the size of one struct.
+    Note:  An alternative to this Double_Complex type would be to use a
+    struct { double r ; double i ; }.  The problem with that method
+    (used by the Sun Performance Library, for example) is that ANSI C provides
+    no guarantee about the layout of a struct.  It is possible that the sizeof
+    the struct above would be greater than 2 * sizeof (double).  This would
+    mean that the complex BLAS could not be used.  The method used here avoids
+    that possibility.  ANSI C *does* guarantee that an array of structs has
+    the same size as n times the size of one struct.
 
-	The ANSI C99 version of the C language includes a "double _Complex" type.
-	It should be possible in that case to do the following:
+    The ANSI C11 version of the C language includes a "double complex" type.
+    It should be possible in that case to do the following:
 
-	#define Entry double _Complex
+    #define Entry double complex
 
-	and remove the Double_Complex struct.  The macros, below, could then be
-	replaced with instrinsic operators.  Note that the #define Real and
-	#define Imag should also be removed (they only appear in this file).
+    and remove the Double_Complex struct.  The macros, below, could then be
+    replaced with instrinsic operators.  Note that the #define Real and
+    #define Imag should also be removed (they only appear in this file).
 
-	For the MULT, MULT_SUB, MULT_SUB_CONJ, and MULT_CONJ macros,
-	the output argument c cannot be the same as any input argument.
+    For the MULT, MULT_SUB, MULT_SUB_CONJ, and MULT_CONJ macros,
+    the output argument c cannot be the same as any input argument.
 
 */
 
 typedef struct
 {
-	double component[2];      /* real and imaginary parts */
+    double component [2] ;      /* real and imaginary parts */
 
-} Double_Complex;
+} Double_Complex ;
 
-typedef Double_Complex Unit;
+typedef Double_Complex Unit ;
 #define Entry Double_Complex
 #define Real component [0]
 #define Imag component [1]
@@ -355,21 +371,21 @@ typedef Double_Complex Unit;
 #define SPLIT(sz) ((sz) != (double *) NULL)
 
 /* c = (s1) + (s2)*i, if s2 is null, then X is in "packed" format (compatible
- * with Entry and ANSI C99 double _Complex type).  */
- /*#define ASSIGN(c,s1,s2,p,split)       \
- { \
-	 if (split) \
-	 { \
-		 (c).Real = (s1)[p] ; \
-		 (c).Imag = (s2)[p] ; \
-	 }  \
-	 else \
-	 { \
-		 (c) = ((Entry *)(s1))[p] ; \
-	 }  \
- }*/
+ * with Entry and ANSI C11 double complex type).  */
+/*#define ASSIGN(c,s1,s2,p,split)       \
+{ \
+    if (split) \
+    { \
+        (c).Real = (s1)[p] ; \
+        (c).Imag = (s2)[p] ; \
+    }  \
+    else \
+    { \
+        (c) = ((Entry *)(s1))[p] ; \
+    }  \
+}*/
 
- /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 #define CONJ(a, x) \
 { \
     a.Real = x.Real ; \

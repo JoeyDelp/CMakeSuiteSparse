@@ -1,12 +1,12 @@
-/* ========================================================================= */
-/* === AMD_defaults ======================================================== */
-/* ========================================================================= */
+//------------------------------------------------------------------------------
+// AMD/Source/amd_defaults: set defaults for AMD
+//------------------------------------------------------------------------------
 
-/* ------------------------------------------------------------------------- */
-/* AMD, Copyright (c) Timothy A. Davis,					     */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
-/* email: DrTimothyAldenDavis@gmail.com                                      */
-/* ------------------------------------------------------------------------- */
+// AMD, Copyright (c) 1996-2022, Timothy A. Davis, Patrick R. Amestoy, and
+// Iain S. Duff.  All Rights Reserved.
+// SPDX-License-Identifier: BSD-3-clause
+
+//------------------------------------------------------------------------------
 
 /* User-callable.  Sets default control parameters for AMD.  See amd.h
  * for details.
@@ -14,24 +14,24 @@
 
 #include "suitesparse/amd_internal.h"
 
- /* ========================================================================= */
- /* === AMD defaults ======================================================== */
- /* ========================================================================= */
+/* ========================================================================= */
+/* === AMD defaults ======================================================== */
+/* ========================================================================= */
 
-GLOBAL void AMD_defaults
+void AMD_defaults
 (
-	double Control[]
+    double Control [ ]
 )
 {
-	Int i;
+    Int i ;
 
-	if (Control != (double*)NULL)
+    if (Control != (double *) NULL)
+    {
+	for (i = 0 ; i < AMD_CONTROL ; i++)
 	{
-		for (i = 0; i < AMD_CONTROL; i++)
-		{
-			Control[i] = 0;
-		}
-		Control[AMD_DENSE] = AMD_DEFAULT_DENSE;
-		Control[AMD_AGGRESSIVE] = AMD_DEFAULT_AGGRESSIVE;
+	    Control [i] = 0 ;
 	}
+	Control [AMD_DENSE] = AMD_DEFAULT_DENSE ;
+	Control [AMD_AGGRESSIVE] = AMD_DEFAULT_AGGRESSIVE ;
+    }
 }
